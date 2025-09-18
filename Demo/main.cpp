@@ -1,56 +1,75 @@
-#define SDL_MAIN_HANDLED //·ÀÖ¹ºÍsdl¶¨ÒåµÄmain ³åÍ»
+ï»¿#define SDL_MAIN_HANDLED //é˜²æ­¢å’Œsdlå®šä¹‰çš„main å†²çª
 
 #include <iostream>
 #include <SDL.h>
 #include<SDL_ttf.h>
 #include <SDL_mixer.h>
 #include<SDL_image.h>
+#include<SDL2_gfxPrimitives.h>  //åŸºæœ¬å›¾å…ƒçš„ç»˜åˆ¶
 
 int main()
 {
-	SDL_Init(SDL_INIT_EVERYTHING);                               //³õÊ¼»¯ËùÓĞÏµÍ³
-	IMG_Init(IMG_INIT_JPG | IMG_INIT_PNG);                       //Í¼Æ¬µÄ»¯ÏÈ³õÊ¼ÕâÁ½¸ö¸ñÊ½
-	Mix_Init(MIX_INIT_MP3);                                      //ÒôÆµ¿âµÄ»¯³õÊ¼»¯MP3¸ñÊ½
-	TTF_Init();                                                  // ³õÊ¼»¯×ÖÌå
+	SDL_Init(SDL_INIT_EVERYTHING);                               //åˆå§‹åŒ–æ‰€æœ‰ç³»ç»Ÿ
+	IMG_Init(IMG_INIT_JPG | IMG_INIT_PNG);                       //å›¾ç‰‡çš„åŒ–å…ˆåˆå§‹è¿™ä¸¤ä¸ªæ ¼å¼
+	Mix_Init(MIX_INIT_MP3);                                      //éŸ³é¢‘åº“çš„åŒ–åˆå§‹åŒ–MP3æ ¼å¼
+	TTF_Init();                                                  // åˆå§‹åŒ–å­—ä½“
 
 
-	Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048);            //´ò¿ªÒôÆµÎÄ¼ş  ²ÎÊı£¨ÒôÆµ²ÉÑùÂÊ Ò»°ãÊÇ44100hz£¬¸ñÊ½±ÈÈçmp3 ,Í¨µÀÊı Á¢ÌåÉù¾ÍÊÇË«Í¨µÀ¾ÍÊÇ2£¬ÒôÆµ»º³åÇø´óĞ¡ ´óµÄ»º³åÇø ĞÔÄÜÏûºÄĞ¡ µ«ÊÇÑÓ³Ù¸ß Ğ¡µÄ»º³åÇøÏà·´£©
+	Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048);            //æ‰“å¼€éŸ³é¢‘æ–‡ä»¶  å‚æ•°ï¼ˆéŸ³é¢‘é‡‡æ ·ç‡ ä¸€èˆ¬æ˜¯44100hzï¼Œæ ¼å¼æ¯”å¦‚mp3 ,é€šé“æ•° ç«‹ä½“å£°å°±æ˜¯åŒé€šé“å°±æ˜¯2ï¼ŒéŸ³é¢‘ç¼“å†²åŒºå¤§å° å¤§çš„ç¼“å†²åŒº æ€§èƒ½æ¶ˆè€—å° ä½†æ˜¯å»¶è¿Ÿé«˜ å°çš„ç¼“å†²åŒºç›¸åï¼‰
 
-	SDL_Window* window = SDL_CreateWindow(u8"ÄãºÃÊÀ½ç",SDL_WINDOWPOS_CENTERED,SDL_WINDOWPOS_CENTERED,1280,720,SDL_WINDOW_SHOWN);  //´´½¨ÓÎÏ·´°¿Ú
-	SDL_Renderer* renderer = SDL_CreateRenderer(window,-1,SDL_RENDERER_ACCELERATED);                                             //¼òµ¥µÄäÖÈ¾Æ÷ ²ÎÊı£¨´°¿Ú£¬³õÊ¼»¯µÄÇı¶¯Ë÷Òıindex,Ó²¼ş¼ÓËÙ»òÕß´¹Ö±Í¬²½µÈÉèÖÃ£©
+	SDL_Window* window = SDL_CreateWindow(u8"ä½ å¥½ä¸–ç•Œ",SDL_WINDOWPOS_CENTERED,SDL_WINDOWPOS_CENTERED,1280,720,SDL_WINDOW_SHOWN);  //åˆ›å»ºæ¸¸æˆçª—å£
+	SDL_Renderer* renderer = SDL_CreateRenderer(window,-1,SDL_RENDERER_ACCELERATED);                                             //ç®€å•çš„æ¸²æŸ“å™¨ å‚æ•°ï¼ˆçª—å£ï¼Œåˆå§‹åŒ–çš„é©±åŠ¨ç´¢å¼•index,ç¡¬ä»¶åŠ é€Ÿæˆ–è€…å‚ç›´åŒæ­¥ç­‰è®¾ç½®ï¼‰
 
 
 	SDL_Surface* suf_img = IMG_Load("image2.jpg");
-	SDL_Texture* tex_img = SDL_CreateTextureFromSurface(renderer, suf_img);                                                      //ÒªäÖÈ¾Ò»¸öÍ¼Æ¬¶¼ÊÇÕâ¸ö²½Öè  ÏÈ¶ÁÈ¡Í¼Æ¬µ½ÄÚ´æ  SDL_CreateTextureFromSurfaceÔò¸ºÔğ°ÑÍ¼´Ócpu-GPU ±ä³ÉÎÆÀí
+	SDL_Texture* tex_img = SDL_CreateTextureFromSurface(renderer, suf_img);                                                      //è¦æ¸²æŸ“ä¸€ä¸ªå›¾ç‰‡éƒ½æ˜¯è¿™ä¸ªæ­¥éª¤  å…ˆè¯»å–å›¾ç‰‡åˆ°å†…å­˜  SDL_CreateTextureFromSurfaceåˆ™è´Ÿè´£æŠŠå›¾ä»cpu-GPU å˜æˆçº¹ç†
+
+	TTF_Font* font = TTF_OpenFont("ipix.ttf",32);																				//æ‰“å¼€å­—ä½“æ–‡ä»¶ï¼ˆæ˜¯çš„ ä½ éœ€è¦ä¸€ä¸ªå­—ä½“æ–‡ä»¶ï¼‰
+	SDL_Color color = { 255,255,255,255 };
+	SDL_Surface* suf_text = TTF_RenderUTF8_Blended(font, u8"ä½ å¥½ï¼Œä¸–ç•Œ",color);
+	SDL_Texture* tex_text = SDL_CreateTextureFromSurface(renderer, suf_text);                                                    //å­—ä½“ä¸€æ ·çš„ è¦å˜æˆçº¹ç† å³surfaceåˆ°texture
+
+	//--------------SDL_Surfaceæ˜¯å­˜å‚¨äºâ€‹â€‹ç³»ç»Ÿå†…å­˜ï¼ˆCPUå¯è®¿é—®ï¼‰â€‹â€‹ ä¸­çš„åƒç´ æ•°æ®ï¼ˆå¦‚RGBAæ ¼å¼ï¼‰ï¼Œå¯ä»¥ç›´æ¥é€šè¿‡CPUä¿®æ”¹åƒç´ 
+	//--------------SDL_Textureæ˜¯å­˜å‚¨äºâ€‹â€‹æ˜¾å­˜ï¼ˆGPUä¸“ç”¨ï¼‰â€‹â€‹ ä¸­çš„å›¾åƒå¯¹è±¡ â€‹â€‹ä¸å¯ç›´æ¥ä¿®æ”¹â€‹â€‹ï¼šæ— æ³•é€šè¿‡CPUç›´æ¥è®¿é—®åƒç´ æ•°æ®ï¼Œéœ€é€šè¿‡Surfaceåˆ›å»ºæˆ–æ›´æ–°
+	//--------------Textureé€šå¸¸ç”±Surfaceè½¬æ¢è€Œæ¥  ç„¶åè¿˜éœ€è¦ä¸€ä¸ªç»˜åˆ¶çš„ä½ç½®å’Œå®½é«˜ è¿™å°±ç”±SDL_Rectç»“æ„ä½“å®Œæˆ  
+	//--------------æœ€åçš„æ¸²æŸ“å‡½æ•° è­¬å¦‚SDL_RenderCopy æ—¢éœ€è¦SDL_Texture   SDL_Rect  è¿™å°±æ˜¯å›¾ç‰‡å­—ä½“æ¸²æŸ“èµ°çš„é“¾
+
+
+	Mix_Music* music = Mix_LoadMUS("music.mp3");
+	Mix_FadeInMusic(music, -1, 1500);   //-1æ˜¯ä¸€ç›´å¾ªç¯ æŒç»­1500æ¯«ç§’
 
 
 
 
-	bool is_quit = false;                                                                                                       //³ÌĞòÊÇ·ñÍË³öµÄ±êÖ¾Î»
+	bool is_quit = false;                                                                                                       //ç¨‹åºæ˜¯å¦é€€å‡ºçš„æ ‡å¿—ä½
 
-	SDL_Event event;                                                                                                            //ÊµÀı»¯Õâ¸ö ²ÅÄÜÍÏ×§´°¿ÚÉ¶µÄ²Ù×÷ ´¦Àí¸÷ÖÖÊÂ¼ş ±ÈÈçÊó±êµÄ¸÷ÖÖ²Ù×÷ ´°¿ÚµÄËõ·ÅÍÏ×§ ¹Ø±Õ´°¿ÚµÈ
+	SDL_Event event;                                                                                                            //å®ä¾‹åŒ–è¿™ä¸ª æ‰èƒ½æ‹–æ‹½çª—å£å•¥çš„æ“ä½œ å¤„ç†å„ç§äº‹ä»¶ æ¯”å¦‚é¼ æ ‡çš„å„ç§æ“ä½œ çª—å£çš„ç¼©æ”¾æ‹–æ‹½ å…³é—­çª—å£ç­‰
 	SDL_Point pos_cursor = { 0,0 };
-	SDL_Rect rect_img;
+	SDL_Rect rect_img, rect_text;
 
 	rect_img.w = suf_img->w;
-	rect_img.h = suf_img->h;
+	rect_img.h = suf_img->h;  //è¦æ¸²æŸ“å›¾ç‰‡çš„ä½ç½® å®½é«˜çš„ä¿¡æ¯
+
+
+	rect_text.w = suf_text->w;
+	rect_text.h = suf_text->h;  //è¦æ¸²æŸ“çš„å­—ä½“çš„ä½ç½® å®½é«˜çš„ä¿¡æ¯
 
 
 
 	while (!is_quit)
 	{
-		//´°¿Ú²Ù×÷²ã
+		//çª—å£æ“ä½œå±‚
 		while (SDL_PollEvent(&event))
 		{
-			if (event.type == SDL_QUIT)//Èç¹ûÖ÷¶¯¹Ø±Õ´°¿Ú »á´¥·¢Ò»¸öSDL_QUITÊÂ¼ş
+			if (event.type == SDL_QUIT)//å¦‚æœä¸»åŠ¨å…³é—­çª—å£ ä¼šè§¦å‘ä¸€ä¸ªSDL_QUITäº‹ä»¶
 			{
 				is_quit = true;
 
 			}
 
-			else if (event.type == SDL_MOUSEMOTION)//Êó±êÒÆ¶¯ÊÂ¼ş
+			else if (event.type == SDL_MOUSEMOTION)//é¼ æ ‡ç§»åŠ¨äº‹ä»¶
 			{
-				pos_cursor.x = event.motion.x; //Êó±êÒÆ¶¯¾Í¸üĞÂÎ»ÖÃ
+				pos_cursor.x = event.motion.x; //é¼ æ ‡ç§»åŠ¨å°±æ›´æ–°ä½ç½®
 				pos_cursor.y = event.motion.y;
 
 			}
@@ -58,18 +77,27 @@ int main()
 
 		}
 
-		//´¦ÀíÊı¾İÄ£¿é ÓÎÏ·Âß¼­²ã
-		rect_img.x = pos_cursor.x;
+		//å¤„ç†æ•°æ®æ¨¡å— æ¸¸æˆé€»è¾‘å±‚
+		rect_img.x = pos_cursor.x; //è¿™é‡Œæ˜¯æ˜¾ç¤ºå›¾ç‰‡çš„ä½ç½®å®½é«˜å•¥çš„
 		rect_img.y = pos_cursor.y;
 
 
+		rect_text.x = pos_cursor.x;
+		rect_text.y = pos_cursor.y;
 
-		//äÖÈ¾Ä£¿é
-		SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);        //ÉèÖÃrendereräÖÈ¾ÑÕÉ«ÎªºÚÉ«
-		SDL_RenderClear(renderer);                             //ÓÃrenderer ¸²¸ÇÕû¸ö´°¿Ú  ÕâÊ±ºòrendererÊÇºÚÉ«µÄ  ¾ÍÊÇÇåÆÁÁË
 
-		SDL_RenderCopy(renderer, tex_img, nullptr, &rect_img);//×îºóÒ»¸ö²ÎÊı¾ÍÊÇÒªÌá¹©äÖÈ¾µÄËÄ¸ö·ÖÁ¿ £¨x£¬y£©È·ÈÏÔÚÄÄÀïÎ»ÖÃ  £¨z£¬w£©È·ÈÏ»æÖÆ¶à´ó
-		SDL_RenderPresent(renderer);                         //²»¶Ï¸üĞÂäÖÈ¾»­Ãæ
+		//æ¸²æŸ“æ¨¡å—
+		SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);        //è®¾ç½®rendereræ¸²æŸ“é¢œè‰²ä¸ºé»‘è‰²
+		SDL_RenderClear(renderer);                             //ç”¨renderer è¦†ç›–æ•´ä¸ªçª—å£  è¿™æ—¶å€™rendereræ˜¯é»‘è‰²çš„  å°±æ˜¯æ¸…å±äº†
+
+		
+		SDL_RenderCopy(renderer, tex_img, nullptr, &rect_img);//æœ€åä¸€ä¸ªå‚æ•°å°±æ˜¯è¦æä¾›æ¸²æŸ“çš„å››ä¸ªåˆ†é‡ ï¼ˆxï¼Œyï¼‰ç¡®è®¤åœ¨å“ªé‡Œä½ç½®  ï¼ˆzï¼Œwï¼‰ç¡®è®¤ç»˜åˆ¶å¤šå¤§
+
+		filledCircleRGBA(renderer, pos_cursor.x, pos_cursor.y, 50, 255, 25, 25, 128); //ç”»ä¸ªåœ†ã€‚ã€‚ã€‚ã€‚
+
+		SDL_RenderCopy(renderer, tex_text, nullptr, &rect_text);
+
+		SDL_RenderPresent(renderer);                         //ä¸æ–­æ›´æ–°æ¸²æŸ“ç”»é¢
 
 	}
 
