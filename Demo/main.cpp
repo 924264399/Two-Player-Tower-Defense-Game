@@ -1,14 +1,78 @@
 ﻿#define SDL_MAIN_HANDLED //防止和sdl定义的main 冲突
 
 #include <iostream>
+
+#include <string>
+#include <fstream>
+#include <sstream>
+#include <iostream>
+
+#include <cJSON.h>
 #include <SDL.h>
 #include<SDL_ttf.h>
 #include <SDL_mixer.h>
 #include<SDL_image.h>
 #include<SDL2_gfxPrimitives.h>  //基本图元的绘制
 
+
+
+void test_json()
+{
+	std::ifstream file("testjson.json");  //读取文件用的还是 输入流 这个库
+
+	if (!file.good())
+	{
+
+
+		std::cout << "no file" << std::endl;
+
+	}
+
+
+	std::stringstream str_stream;
+	str_stream << file.rdbuf();   //这是把文件数据全部读到 stringstream str_stream 里    这个stringstream是是 STL 中 <sstream> 头文件提供的字符串流类，可以理解为 “内存中的字符串缓冲区”，兼具 “输入流” 和 “输出流” 的功能：
+								//它的核心作用是在内存中临时存储和处理字符串，方便进行字符串拼接、格式转换（如数字转字符串）等操作
+	file.close();               //为什么要又这么个 读取 - 转移数据  -关闭文件 的流程？ file.close() 可以手动释放文件句柄，避免文件被长时间锁定（比如其他程序想修改该文件时会失败）
+
+	cJSON* json_root = cJSON_Parse(str_stream.str().c_str()); //解析已经包含所有数据的str_stream的字符串 和 c_str  就是把字符串解析为json的语法结构
+															//这个cJSON你进去看 会发现包含了所有的常用数据类型 这是用一个结构体兼容 JSON 的所有数据类型，解析时根据 type 判断该用哪个 value 成员，从而正确存储和访问 JSON 中的数据。
+
+
+
+	cJSON* json_name = cJSON_GetObjectItem(json_root, "xingming");//从json_root里找 name
+	cJSON* json_age = cJSON_GetObjectItem(json_root, "nianling");
+	cJSON* json_pets = cJSON_GetObjectItem(json_root, "chongwu");
+
+
+	std::cout << json_name->string << ":" << json_name->valuestring << std::endl;  // 这里的 ->string是key  ->valuestring 是value  具体你要去cJSON这个struct里看
+
+	std::cout << json_name->string << ":" << json_name->valueint << std::endl;
+	std::cout << json_pets->string << ":" <<  std::endl;
+
+
+	cJSON* json_item = nullptr;
+	cJSON_ArrayForEach(json_item, json_pets)   //因为在我提供json文件里 json_pets读取的是chongwu 这个列表  所以这边要进行遍历的  cJSON_ArrayForEach打开这个函数你会发现是个for循环
+	{
+
+		std::cout << "\t" << json_item->valuestring << std::endl;
+
+	}
+
+
+
+}
+
+
+
+
+
 int main()
 {
+
+	test_json();
+
+
+
 	SDL_Init(SDL_INIT_EVERYTHING);                               //初始化所有系统
 	IMG_Init(IMG_INIT_JPG | IMG_INIT_PNG);                       //图片的化先初始这两个格式
 	Mix_Init(MIX_INIT_MP3);                                      //音频库的化初始化MP3格式
@@ -38,6 +102,8 @@ int main()
 	Mix_Music* music = Mix_LoadMUS("music.mp3");
 	Mix_FadeInMusic(music, -1, 1500);   //-1是一直循环 持续1500毫秒
 
+	int fps = 60; //帧率
+
 
 
 
@@ -46,6 +112,11 @@ int main()
 	SDL_Event event;                                                                                                            //实例化这个 才能拖拽窗口啥的操作 处理各种事件 比如鼠标的各种操作 窗口的缩放拖拽 关闭窗口等
 	SDL_Point pos_cursor = { 0,0 };
 	SDL_Rect rect_img, rect_text;
+
+	Uint64 last_counter = SDL_GetPerformanceCounter();           //这是高性能计数器的计数总数
+	Uint64 conter_freq = SDL_GetPerformanceFrequency();          //频率 每一秒这个高性能计数器会跳多少下
+
+
 
 	rect_img.w = suf_img->w;
 	rect_img.h = suf_img->h;  //要渲染图片的位置 宽高的信息
@@ -76,6 +147,18 @@ int main()
 
 
 		}
+
+
+		Uint64 current_counter = SDL_GetPerformanceCounter();
+		double delta = (double)(current_counter - last_counter) / conter_freq; // (当前计数 - 上一次计数)/频率   就可以得到这一次调用 和 上次调用之间的秒数(一次循环的秒数)
+
+		last_counter = current_counter;
+
+		if (delta * 1000 < 1000.0 / 60)
+			SDL_Delay((Uint32)(1000.0 / 60 - delta * 1000));   //这是舍弃什么？
+
+
+
 
 		//处理数据模块 游戏逻辑层
 		rect_img.x = pos_cursor.x; //这里是显示图片的位置宽高啥的
