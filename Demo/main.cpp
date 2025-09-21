@@ -1,11 +1,10 @@
 ﻿#define SDL_MAIN_HANDLED //防止和sdl定义的main 冲突
 
-#include <iostream>
-
+#include <iostream>  //输入输出 比如你常用的cout  cin  
 #include <string>
-#include <fstream>
-#include <sstream>
-#include <iostream>
+#include <fstream>  //读文件的
+#include <sstream>   //std::stringstream 流  应用场景：字符串的 “拆分” 与 “格式转换
+
 
 #include <cJSON.h>
 #include <SDL.h>
@@ -25,6 +24,7 @@ void test_json()
 
 
 		std::cout << "no file" << std::endl;
+		return;
 
 	}
 
@@ -65,11 +65,47 @@ void test_json()
 
 
 
+void test_csv()
+{
+
+	std::ifstream file("test.csv");
+
+	if (!file.good())
+	{
+		std::cout << "no file" << std::endl;
+		return;
+	}
+
+	std::string str_line;							//// 存储"一行文本"的字符串
+
+	while (std::getline(file, str_line))          // 循环读文件的每一行（用getline默认分隔符'\n'）
+	{
+		std::string str_grid;						//存储"一个CSV字段"的字符串
+		std::stringstream str_stream (str_line);   //把"一行文本"转换成"内存中的字符串流"（因为getline只能读流）  std::stringstream是库sstream的函数 用于字符串格式准换然后拆分啥的
+		
+		while (std::getline(str_stream, str_grid,','))   //把str_stream 读到 str_grid
+		{
+
+			std::cout << str_grid << " ";
+
+
+		}
+
+		std::cout << std::endl;
+
+	}
+
+	file.close();
+}
+
+
+
 
 int main()
 {
 
 	test_json();
+	test_csv();
 
 
 
