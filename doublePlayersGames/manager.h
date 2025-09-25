@@ -1,5 +1,5 @@
 ﻿#ifndef  _MANAGER_H_
-#define _MANAGER_H
+#define _MANAGER_H_
 
 template<typename T>
 
@@ -13,10 +13,10 @@ public:
 	// 静态方法获取唯一实例  相当于在外部直接调用这个静态方法来创建实例
 	static T* instance()
 	{
-		if (!manager1)
-			manager1 = new T();
+		if (!manager)
+			manager = new T();
 
-		return manager1;
+		return manager;
 
 	}
 
@@ -24,7 +24,7 @@ public:
 	
 
 private:
-	static T* manager1; // 静态成员指针（存储唯一实例）这里我为了区分给这个实例取名是manager1
+	static T* manager; // 静态成员指针（存储唯一实例）这里我为了区分给这个实例取名是manager1
 
 
 //改为protected 允许子类访问父类构造函数和析构函数
@@ -46,7 +46,7 @@ protected:
 
 //模块相关的代码
 template<typename T>
-T* Manager<T> ::manager1 = nullptr;
+T* Manager<T> ::manager = nullptr;
 
 
 #endif // ! _MANAGER_H_
