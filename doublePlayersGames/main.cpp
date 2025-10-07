@@ -1,17 +1,16 @@
-﻿#include <iostream>
+﻿#define SDL_MAIN_HANDLED //防止和sdl定义的main 冲突
 
-#include "manager.h"
+
+#include <iostream>
+
+//#include "manager.h"
 #include "game_manager.h"
 
 
 
-int main()
+int main(int argc, char** argv)
 {
-	GameManager* instance = GameManager::instance();
+	return GameManager::instance()->run(argc, argv);
 
-		
-	std::cout << "hellow world" << std::endl;
-
-	return 0;
 
 }
