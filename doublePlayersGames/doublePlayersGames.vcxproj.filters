@@ -29,5 +29,8 @@
     <ClInclude Include="game_manager.h">
       <Filter>头文件\manager</Filter>
     </ClInclude>
+    <ClInclude Include="tile.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

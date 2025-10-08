@@ -100,7 +100,6 @@ protected:
 		SDL_Quit();
 
 
-
 	}
 
 private:
