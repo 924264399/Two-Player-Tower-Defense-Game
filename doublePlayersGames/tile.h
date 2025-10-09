@@ -26,7 +26,7 @@ struct Tile
 
 };
 
-typedef std::vector<std::vector<Tile>> TileMap;
+typedef std::vector<std::vector<Tile>> TileMap; //typedef 关键字 起别名  std::vector<std::vector<Tile>>是二维动态数组
 
 
 
