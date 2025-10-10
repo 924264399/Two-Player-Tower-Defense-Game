@@ -65,9 +65,33 @@ public:
 		
 		tile_map = tile_map_temp;
 
+		generate_map_cache();
+
 		return true;
 
 	}
+
+
+	///地图宽度  加const是这个方法对内不会修改
+	size_t get_width() const
+	{
+
+		if (tile_map.empty())
+			return 0;
+
+		return tile_map[0].size();
+	}
+
+
+	size_t get_height() const
+	{
+
+		return tile_map.size();
+
+	}
+
+
+
 
 private:
 
@@ -136,6 +160,32 @@ private:
 		tile.direction = (Tile::Direction)((values.size() < 3 || values[2] < 0) ? 0 : values[2] );
 
 		tile.special_flag = (values.size() <= 3) ? -1 : values[3];
+
+	}
+
+
+	//生成地图缓存  遍历每个单元格
+	void generate_map_cache()
+	{
+		for (int y = 0; y < get_height(); y++)
+		{
+			for (int x = 0; x < get_width(); x++)
+			{
+				const Tile& tile = tile_map[y][x];
+
+				if (tile.special_flag < 0)
+					continue;
+
+
+				if (tile.special_flag == 0)
+				{
+					idx_home.x = x;
+					idx_home.y = y;
+				}
+
+
+			}
+		}
 
 	}
 
