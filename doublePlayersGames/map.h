@@ -36,7 +36,7 @@ public:
 
 
 			idx_x = -1, idx_y++;
-			tile_map_temp.emplace_back();
+			tile_map_temp.emplace_back(); //二维数组是这样添加的
 
 			std::string str_tile;
 			std::stringstream str_stream(str_tile);
