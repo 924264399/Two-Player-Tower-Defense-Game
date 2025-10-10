@@ -12,7 +12,7 @@ struct Tile
 		None = 0,
 		Up,
 		Down,
-		Lift,
+		Left,
 		Right,
 	};
 

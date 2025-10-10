@@ -26,14 +26,46 @@ public:
 
 		std::string str_line;
 
-		while (std::getline(file, str_line))          // 循环读文件的每一行（用getline默认分隔符'\n'）
+		while (std::getline(file, str_line))          /////// 外层循环读文件的每一行（用getline默认分隔符'\n'） 
 		{
 
+			str_line = trim_str(str_line);  //去除前后空白符
 
+			if (str_line.empty())            //如果有一行是空的 就跳过
+				continue;
+
+
+			idx_x = -1, idx_y++;
+			tile_map_temp.emplace_back();
+
+			std::string str_tile;
+			std::stringstream str_stream(str_tile);
+
+			while (std::getline(str_stream, str_tile, ','))   /////内层循环处理每一列
+			{
+				idx_x++;
+				tile_map_temp[idx_y].emplace_back();
+				Tile& tile = tile_map_temp[idx_y].back();
+				load_tile_from_string(tile, str_tile); //核心
+
+			}
 
 		}
+		///////////////依0,1,2
+		/////////////// 3, 4, 5 数据为例
+		///////////////外层循环会直接读到 0 1 2
+		///////////////内层循环因为getline有，的分隔符  所以依次读0 1 2 
 
 
+		file.close();
+
+
+		if (tile_map_temp.empty() || tile_map_temp[0].empty())
+			return false;
+		
+		tile_map = tile_map_temp;
+
+		return true;
 
 	}
 
@@ -63,6 +95,49 @@ private:
 	}
 
 
+
+	// 拿csv地图数据 到 tile类的属性
+	//具体就是从str字符串 解析到  tile对象
+	void load_tile_from_string(Tile& tile, const std::string& str)
+	{
+
+		std::string str_tidy = trim_str(str);
+
+		std::string str_value;
+		std::vector<int> values;
+
+		std::stringstream str_stream(str_tidy);
+
+
+		while (std::getline(str_stream, str_value, '\\'))
+		{
+			int value;
+
+			try
+			{
+				value = std::stoi(str_value);
+			}
+
+			catch (const std::exception)
+			{
+
+				value = -1;
+
+			}
+			values.push_back(value);
+
+		}
+
+		//这是tile类的属性 在csv文件里  每个格子有存储4个值  分别代表基础地块 - 装饰卡片（树木啊 牌子啊）-行进路线（箭头）-特殊标志（刷怪点 家）  这里需要分别给到相应的属性
+		//之所以下面这么写 主要还是为了防止数据有问题
+		tile.terrian = (values.size() < 1 || values[0] < 0) ? 0 : values[0];    // 条件 ？ 是的结果 ： 否的结果
+		tile.decoration = (values.size() < 2) ? -1 : values[1];
+
+		tile.direction = (Tile::Direction)((values.size() < 3 || values[2] < 0) ? 0 : values[2] );
+
+		tile.special_flag = (values.size() <= 3) ? -1 : values[3];
+
+	}
 
 };
 
