@@ -2,14 +2,24 @@
 #define _MAP_H_
 
 #include "tile.h"
+#include "route.h"
 
 #include <SDL.h>
 #include <string>
 #include <fstream>
 #include <sstream>
+#include <unordered_map> //存储离散数据合适 哈希表
+
 
 class Map
 {
+
+public:
+	typedef std::unordered_map<int, Route> SpawnerRoutePool;
+
+
+
+
 public:
 	Map() = default;
 	~Map() = default;
@@ -97,6 +107,7 @@ private:
 
 	TileMap tile_map;  //动态二维数组
 	SDL_Point idx_home = { 0 };
+	SpawnerRoutePool spawner_route_pool;
 
 
 private:
@@ -177,10 +188,15 @@ private:
 					continue;
 
 
-				if (tile.special_flag == 0)
+				if (tile.special_flag == 0) // 如果是家
 				{
 					idx_home.x = x;
 					idx_home.y = y;
+				}
+				else                        //如果是刷怪点  那么就生成这个路径信息 存储到spawner_route_pool这个unordered_map数据格式内
+				{
+					spawner_route_pool[tile.special_flag] = Route(tile_map, { x,y }); //这里可能反了
+
 				}
 
 
