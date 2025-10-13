@@ -86,7 +86,7 @@ public:
 
 		return idx_list;
 
-	}
+	}  //通过这个输出idx_list
 
 
 private:
@@ -116,3 +116,5 @@ private:
 
 #endif // !_ROUTE_H_
 
+///////整个类的设计围绕idx_list整个核心构建 其存储着每个出生点之后怪物的路径的坐标点位置
+//////是private属性  再通过有参构造进行填充  最后通过get_idx_list方法输出
