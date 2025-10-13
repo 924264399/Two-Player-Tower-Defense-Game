@@ -100,6 +100,31 @@ public:
 
 	}
 
+	const TileMap& get_tile_map() const   //返回引用 前面const修饰 只读不能改   后面const 确保函数内部不改
+	{
+
+		return tile_map;
+	}
+
+
+	const SDL_Point& get_idx_home() const
+	{
+
+		return idx_home;
+	}
+
+	const SpawnerRoutePool& get_idx_spawner_pool() const
+	{
+
+		return spawner_route_pool;
+
+	}
+
+	void place_towewr(const SDL_Point& idx_tile)
+	{
+		tile_map[idx_tile.y][idx_tile.x].has_tower = true;
+
+	}
 
 
 
