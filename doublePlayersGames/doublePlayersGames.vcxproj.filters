@@ -16,6 +16,9 @@
     <Filter Include="头文件\manager">
       <UniqueIdentifier>{559d0b7d-965f-48f2-ad2e-2d7b987e5890}</UniqueIdentifier>
     </Filter>
+    <Filter Include="头文件\enemy">
+      <UniqueIdentifier>{2604a028-7fd8-493c-93f7-63e6ea8ca72b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -40,6 +43,12 @@
     </ClInclude>
     <ClInclude Include="config_manager.h">
       <Filter>头文件\manager</Filter>
+    </ClInclude>
+    <ClInclude Include="wave.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="enemy_type.h">
+      <Filter>头文件\enemy</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
