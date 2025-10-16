@@ -8,7 +8,7 @@
 
 
 ///是 level.json 这里面的信息
-struct wave
+struct Wave
 {
 
 	struct SpawnEvent
