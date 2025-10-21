@@ -27,7 +27,7 @@ class ConfigManager : public Manager<ConfigManager>
 public:
 
 	///基础 属性 从基础的名字 窗口大小 到 防御塔 和 敌人的初始属性等等
-	struct BssicTemplate
+	struct BasicTemplate
 	{
 		std::string window_title = u8"保卫把！";
 		int window_width =1280;
@@ -214,8 +214,31 @@ public:
 
 	bool load_game_config(const std::string& path)
 	{
+		std::ifstream file(path);
+		if (!file.good()) return false;
 
+		std::stringstream str_stream;
+		str_stream << file.rdbuf(); file.close();
 
+		cJSON* json_root = cJSON_Parse(str_stream.str().c_str());
+		if (!json_root || json_root->type != cJSON_Object) return false;
+
+		cJSON* json_basic = cJSON_GetObjectItem(json_root, "basic");
+		cJSON* json_player = cJSON_GetObjectItem(json_root, "player");
+		cJSON* json_tower = cJSON_GetObjectItem(json_root, "tower");
+		cJSON* json_enemy = cJSON_GetObjectItem(json_root, "enemy");
+
+		if (!json_basic || !json_player || !json_tower || !json_enemy
+			|| json_basic->type != cJSON_Object
+			|| json_player->type != cJSON_Object
+			|| json_tower->type != cJSON_Object
+			|| json_enemy->type != cJSON_Object)
+		{
+
+			cJSON_Delete(json_root);    //记得释放
+			return false;
+
+		}
 
 	}
 
@@ -228,6 +251,28 @@ protected:
 
 
 	~ConfigManager() = default;
+
+
+private:
+	void parse_basic_template(BasicTemplate& tpl,cJSON* json_root)
+		{
+		if (!json_root || json_root->type != cJSON_Object) return;
+
+		cJSON* json_window_title = cJSON_GetObjectItem(json_root, "window_title");
+		cJSON* json_window_width = cJSON_GetObjectItem(json_root, "window_width");
+		cJSON* json_window_height = cJSON_GetObjectItem(json_root, "window_height");
+
+		if (json_window_title && json_window_title->type == cJSON_String)    //如果存在  并且 类型正确   才赋值
+			tpl.window_title = json_window_title->valuestring;
+
+		if (json_window_width && json_window_width->type == cJSON_Number)
+			tpl.window_width = json_window_width->valueint;
+
+		if (json_window_height && json_window_height->type == cJSON_Number)
+			tpl.window_height = json_window_height->valueint;
+		}
+
+
 
 };
 
