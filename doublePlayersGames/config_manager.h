@@ -86,7 +86,7 @@ public:
 	bool is_game_over = false;
 	SDL_Rect rect_tilp_map = { 0 };
 	 
-	BssicTemplate basic_template;
+	BasicTemplate basic_template;
 	PlayerTemplate player_template;
 
 	//防御塔几个对象 弓手 axeman 枪手
@@ -99,7 +99,7 @@ public:
 	EnemyTemplate king_slim_template;		//皇家史莱姆
 	EnemyTemplate skeleton_template;		//骷髅
 	EnemyTemplate goblin_template;			//哥布林
-	EnemyTemplate goblin_priset_template;  //哥布林祭祀
+	EnemyTemplate goblin_priest_template;  //哥布林祭祀
 
 	//一些初始设置
 	const double num_initial_hp = 10;
@@ -240,6 +240,24 @@ public:
 
 		}
 
+		parse_basic_template(basic_template, json_basic);          ////把数据一层一层拨开  最后放到设置好的对象里
+
+		parse_player_template(player_template, json_player);
+
+		parse_tower_template(archer_template, cJSON_GetObjectItem(json_tower, "archer"));
+		parse_tower_template(axeman_template, cJSON_GetObjectItem(json_tower, "axeman"));
+		parse_tower_template(gunner_template, cJSON_GetObjectItem(json_tower, "gunner"));
+
+		parse_enemy_template(slim_template, cJSON_GetObjectItem(json_enemy, "slim"));
+		parse_enemy_template(king_slim_template, cJSON_GetObjectItem(json_enemy, "king_slim"));
+		parse_enemy_template(skeleton_template, cJSON_GetObjectItem(json_enemy, "skeleton"));
+		parse_enemy_template(goblin_template, cJSON_GetObjectItem(json_enemy, "goblin"));
+		parse_enemy_template(goblin_priest_template, cJSON_GetObjectItem(json_enemy, "goblin_priest")); 
+
+		cJSON_Delete(json_root);  //最后一定释放
+		return true;
+
+
 	}
 
 
@@ -272,6 +290,98 @@ private:
 			tpl.window_height = json_window_height->valueint;
 		}
 
+
+
+	void parse_player_template(PlayerTemplate& tpl, cJSON* json_root)      //这是玩家的属性
+		{
+		if (!json_root || json_root->type != cJSON_Object) return;
+
+		cJSON* json_speed = cJSON_GetObjectItem(json_root, "speed");
+		cJSON* json_normal_attack_interval = cJSON_GetObjectItem(json_root, "normal_attack_interval");
+		cJSON* json_normal_attack_damage = cJSON_GetObjectItem(json_root, "normal_attack_damage");
+		cJSON* json_skill_interval = cJSON_GetObjectItem(json_root, "skill_interval");
+		cJSON* json_skill_damage = cJSON_GetObjectItem(json_root, "skil_damage");
+
+		if (json_speed && json_speed->type == cJSON_Number)
+			tpl.speed = json_speed->valuedouble;
+
+		if (json_normal_attack_interval && json_normal_attack_interval->type == cJSON_Number)
+			tpl.normal_attack_interval = json_normal_attack_interval->valuedouble;
+
+		if (json_normal_attack_damage && json_normal_attack_damage->type == cJSON_Number)
+			tpl.normal_attack_damage = json_normal_attack_damage->valuedouble;
+
+		if (json_skill_interval && json_skill_interval->type == cJSON_Number)
+			tpl.skill_interval = json_skill_interval->valuedouble;
+
+
+		if (json_skill_damage && json_skill_damage->type == cJSON_Number)
+			tpl.skill_damage = json_skill_damage->valuedouble;
+		}
+
+
+	void parse_number_array(double* ary, int max_len, cJSON* json_root)      //解析一个由数组构成的数字
+	{
+		if (!json_root || json_root->type != cJSON_Array)					//这里的json_root就是每个数组属性了 所以先检查一下
+			return;
+
+		int idx = -1;
+		cJSON* json_element = nullptr;
+		cJSON_ArrayForEach(json_element, json_root)
+		{
+			idx++;
+			if (json_element->type != cJSON_Number || idx >= max_len)
+				continue;
+
+			ary[idx] = json_element->valuedouble;
+		}
+	}
+
+	void parse_tower_template(TowerTemplate& tpl, cJSON* json_root)             //防御塔
+	{
+		if (!json_root || json_root->type != cJSON_Object) return;
+
+		cJSON* json_interval = cJSON_GetObjectItem(json_root, "interval");
+		cJSON* json_damage = cJSON_GetObjectItem(json_root, "damage");			//攻击伤害
+		cJSON* json_view_range = cJSON_GetObjectItem(json_root, "view_range");    //视野范围
+		cJSON* json_cost = cJSON_GetObjectItem(json_root, "cost");                //升级费用
+		cJSON* json_upgrade_cost = cJSON_GetObjectItem(json_root, "upgrade_cost");
+
+		parse_number_array(tpl.interval, 10, json_interval);                   //因为防御塔的每个属性都是一个数组 因为防御塔会升级 所以需要专门搞个解析数组的函数
+		parse_number_array(tpl.damage, 10, json_damage);
+		parse_number_array(tpl.view_range, 10, json_view_range);
+		parse_number_array(tpl.cost, 10, json_cost);
+		parse_number_array(tpl.upgrade_cost, 9, json_upgrade_cost);
+	}
+
+
+	void parse_enemy_template(EnemyTemplate& tpl, cJSON* json_root)				//敌人
+	{
+		if (!json_root || json_root->type != cJSON_Object) return;
+
+		cJSON* json_hp = cJSON_GetObjectItem(json_root, "hp");
+		cJSON* json_speed = cJSON_GetObjectItem(json_root, "speed");
+		cJSON* json_damage = cJSON_GetObjectItem(json_root, "damage");
+		cJSON* json_reward_ratio = cJSON_GetObjectItem(json_root, "reward_ratio");
+		cJSON* json_recover_interval = cJSON_GetObjectItem(json_root, "recover_interval");
+		cJSON* json_recover_range = cJSON_GetObjectItem(json_root, "recover_range");
+		cJSON* json_recover_intensity = cJSON_GetObjectItem(json_root, "recover_intensity");
+
+		if (json_hp && json_hp->type == cJSON_Number)
+			tpl.hp = json_hp->valuedouble;
+		if (json_speed && json_speed->type == cJSON_Number)
+			tpl.speed = json_speed->valuedouble;
+		if (json_damage && json_damage->type == cJSON_Number)
+			tpl.damage = json_damage->valuedouble;
+		if (json_reward_ratio && json_reward_ratio->type == cJSON_Number)
+			tpl.reward_ratio = json_reward_ratio->valuedouble;
+		if (json_recover_interval && json_recover_interval->type == cJSON_Number)
+			tpl.recover_interval = json_recover_interval->valuedouble;
+		if (json_recover_range && json_recover_range->type == cJSON_Number)
+			tpl.recover_range = json_recover_range->valuedouble;
+		if (json_recover_intensity && json_recover_intensity->type == cJSON_Number)
+			tpl.recover_intensity = json_recover_intensity->valuedouble;
+	}
 
 
 };
