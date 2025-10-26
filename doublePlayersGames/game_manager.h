@@ -2,12 +2,15 @@
 #define _GAME_MANAGER_H_
 
 #include "manager.h"
+#include "config_manager.h"
+#include "resources_manager.h"
 
 #include <SDL.h>
 #include<SDL_ttf.h>
 #include <SDL_mixer.h>
 #include<SDL_image.h>
 //#include<SDL2_gfxPrimitives.h>  //基本图元的绘制
+
 
 
 class GameManager : public Manager<GameManager>    //这个写法是模板的写法  这样乍一看以为是子类继承父类 但是模板实际上让“父类” 变成了 “为每个子类定制的专属父类” 如果不用模板 子类a和子类b都会实例化父类a的静态方法（a通过静态方法来实现单例
