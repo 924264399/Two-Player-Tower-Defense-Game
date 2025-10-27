@@ -3,7 +3,7 @@
 
 #include <vector>
 
-#define SIZE_TILE 48 //48 flag
+#define SIZE_TILE 48 //48 flag ÍßÆ¬³ß´ç48ÏñËØ
 
 struct Tile
 {

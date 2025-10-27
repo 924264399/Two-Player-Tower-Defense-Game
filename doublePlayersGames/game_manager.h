@@ -128,6 +128,8 @@ private:
 	SDL_Window* window = nullptr;  // 这个窗口是为了报错用的 
 	SDL_Renderer* renderer = nullptr; //渲染器
 
+	SDL_Texture* tex_tile_map = nullptr;
+
 private:
 
 	void init_assert(bool flag, const char* err_msg)
@@ -167,18 +169,96 @@ private:
 
 	bool generate_tile_map_texture() //用这个来生成瓦片地图texture
 	{
+
+	     ////////////////////////////////////////////----------------------------获取地图、瓦片集、尺寸信息----------------------------------//////////////////////////////////////////////////////////
 		const Map& map = ConfigManager::instance()->map;  //获取全局唯一的 Map实例   所以要通过ConfigManager转一圈来获取这个唯一对象 且这个地图只读不修改 所以用const
 
-		const TileMap& tile_map = map.get_tile_map();   //拿到的是二维数组信息  这个是map的csv文件里的  
+		const TileMap& tile_map = map.get_tile_map();   //拿到的是二维数组信息  这个是map的csv文件里的  每个格子存的是瓦片ID
 
 		SDL_Rect& rect_tile_map = ConfigManager::instance()->rect_tilp_map;   //整张地图纹理 在窗口上渲染的位置和尺寸
 
 
-		SDL_Texture* tex_tile_set = ResourcesManager::instance()->get_texture_pool().find(ResID::Tex_Tileset)->second;   //从纹理池重 找到 瓦片那个贴图
+		SDL_Texture* tex_tile_set = ResourcesManager::instance()->get_texture_pool().find(ResID::Tex_Tileset)->second;   //从纹理池重 找到 瓦片那个贴图  就是瓦片集大贴图（瓦片集）
+
+		int width_tex_tile_set, height_tex_tile_set;
+
+		SDL_QueryTexture(tex_tile_set, nullptr, nullptr, &width_tex_tile_set, &height_tex_tile_set); ////   查询（获取）瓦片集的宽高
+		int num_tile_single_line = (int)std::ceil((double)width_tex_tile_set / SIZE_TILE);   //用整个宽度/单个 得到一行多少个瓦片（比如瓦片大小是32x32，贴图宽512，则一行有16个 SIZE_TILE是单个瓦片的尺寸（48像素）
+																							//num_tile_single_line 瓦片集贴图一行能放多少个瓦片，用来后续计算每个瓦片在贴图中的位置
 
 
 
 
+		////////////////////////////////////////////----------------------------创建地图纹理，设置渲染目标----------------------------------//////////////////////////////////////////////////////////
+		int width_tex_tile_map, height_tex_tile_map;
+
+		width_tex_tile_map = (int)map.get_width() * SIZE_TILE;    /// 地图纹理的总宽度 = 地图列数 × 单个瓦片宽
+		height_tex_tile_map = (int)map.get_height() * SIZE_TILE;   // 地图纹理的总高度 = 地图行数 × 单个瓦片高
+
+		tex_tile_map = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_ARGB8888,
+			SDL_TEXTUREACCESS_TARGET, width_tex_tile_map, height_tex_tile_map);
+		if (!tex_tile_map) return false;                           // // 把渲染目标切换到这个“画布”上，后续绘制的内容都会到这个纹理里
+
+		ConfigManager* config = ConfigManager::instance();
+		rect_tile_map.x = (config->basic_template.window_width - width_tex_tile_map) / 2;
+		rect_tile_map.y = (config->basic_template.window_height - height_tex_tile_map) / 2;
+		rect_tile_map.w = width_tex_tile_map;
+		rect_tile_map.h = height_tex_tile_map;
+
+
+		SDL_SetTextureBlendMode(tex_tile_map, SDL_BLENDMODE_BLEND);
+		SDL_SetRenderTarget(renderer, tex_tile_map);    //设置渲染目标是 tex_tile_map
+
+
+		////////////////////////////////////////////----------------------------遍历地图格子，逐个拼接瓦片---------------------------------//////////////////////////////////////////////////////////
+		for (int y = 0; y < map.get_height(); y++)
+		{
+			for (int x = 0; x < map.get_width(); x++)
+			{
+				SDL_Rect rect_src;
+				const Tile& tile = tile_map[y][x];
+
+				const SDL_Rect& rect_dst =
+				{
+					x * SIZE_TILE, y * SIZE_TILE,
+					SIZE_TILE, SIZE_TILE
+				};
+
+				rect_src =
+				{
+					(tile.terrian % num_tile_single_line) * SIZE_TILE,
+					(tile.terrian / num_tile_single_line) * SIZE_TILE,
+					SIZE_TILE, SIZE_TILE
+				};
+				SDL_RenderCopy(renderer, tex_tile_set, &rect_src, &rect_dst);
+
+				if (tile.decoration >= 0)
+				{
+					rect_src =
+					{
+						(tile.decoration % num_tile_single_line) * SIZE_TILE,
+						(tile.decoration / num_tile_single_line) * SIZE_TILE,
+						SIZE_TILE, SIZE_TILE
+					};
+					SDL_RenderCopy(renderer, tex_tile_set, &rect_src, &rect_dst);
+				}
+			}
+		}
+
+		const SDL_Point& idx_home = map.get_idx_home();
+		const SDL_Rect rect_dst =
+		{
+			idx_home.x * SIZE_TILE, idx_home.y * SIZE_TILE,
+			SIZE_TILE, SIZE_TILE
+		};
+		SDL_RenderCopy(renderer, ResourcesManager::instance()->get_texture_pool().find(ResID::Tex_Home)->second, nullptr, &rect_dst);
+
+
+
+
+		SDL_SetRenderTarget(renderer, nullptr);  //重新把渲染目标设回窗口 这和内存释放一样  因为前面设置看tex_tile_map 所以现在需要重新设回去
+
+		return true;
 
 	}
 
