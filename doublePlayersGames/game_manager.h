@@ -79,7 +79,16 @@ protected:
 		SDL_SetHint(SDL_HINT_IME_SHOW_UI, "1"); //输入法用户界面显示的配置  启用 IME 的 UI 显示。用户输入中文等需要转换的文字时，会正常弹出候选词窗口，方便选择。
 
 
-		SDL_Window* window = SDL_CreateWindow(u8"来吧！保卫村庄！", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 1280, 720, SDL_WINDOW_SHOWN);  //创建游戏窗口
+
+		ConfigManager* config = ConfigManager::instance();  //单例是这么写的  instance是静态方法 是需要这么写的
+
+		init_assert(config->map.load("map.csv"), u8"加载游戏地图失败");                 //注意config不是这里实例化的 而是ConfigManager类内的属性  所以自己的属性调用自己的方法 所以用->
+		init_assert(config->load_level_config("level.json"), u8"加载关卡配置失败");
+		init_assert(config->load_game_config("config.json"), u8"加载游戏配置失败");  //init_assert 只关心第一个参数是true 还是 false  如果false返回后面的断言
+
+
+
+		SDL_Window* window = SDL_CreateWindow(config->basic_template.window_title.c_str(), SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, config->basic_template.window_width, config->basic_template.window_height, SDL_WINDOW_SHOWN);  //创建游戏窗口
 
 		init_assert(window, u8" 游戏窗口初始化失败！");
 
@@ -88,6 +97,10 @@ protected:
 
 		init_assert(renderer, u8" 创建渲染器失败！");
 
+
+		init_assert(ResourcesManager::instance()->load_from_file(renderer), u8"加载游戏资源失败");  //这个加载了贴图啊 mp3啊 各种资源
+
+		init_assert(generate_tile_map_texture(),u8"生成瓦片纹理失败");
 
 	}
 
@@ -146,6 +159,24 @@ private:
 
 	void on_render()
 	{
+
+
+
+	}
+
+
+	bool generate_tile_map_texture() //用这个来生成瓦片地图texture
+	{
+		const Map& map = ConfigManager::instance()->map;  //获取全局唯一的 Map实例   所以要通过ConfigManager转一圈来获取这个唯一对象 且这个地图只读不修改 所以用const
+
+		const TileMap& tile_map = map.get_tile_map();   //拿到的是二维数组信息  这个是map的csv文件里的  
+
+		SDL_Rect& rect_tile_map = ConfigManager::instance()->rect_tilp_map;   //整张地图纹理 在窗口上渲染的位置和尺寸
+
+
+		SDL_Texture* tex_tile_set = ResourcesManager::instance()->get_texture_pool().find(ResID::Tex_Tileset)->second;   //从纹理池重 找到 瓦片那个贴图
+
+
 
 
 
