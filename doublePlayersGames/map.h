@@ -49,7 +49,7 @@ public:
 			tile_map_temp.emplace_back(); //二维数组是这样添加的
 
 			std::string str_tile;
-			std::stringstream str_stream(str_tile);
+			std::stringstream str_stream(str_line);
 
 			while (std::getline(str_stream, str_tile, ','))   /////内层循环处理每一列
 			{
