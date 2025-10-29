@@ -19,6 +19,9 @@
     <Filter Include="头文件\enemy">
       <UniqueIdentifier>{2604a028-7fd8-493c-93f7-63e6ea8ca72b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="源文件\cJSON">
+      <UniqueIdentifier>{8acba7ad-c19e-4445-8f27-8a67714ef82e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -26,6 +29,9 @@
     </ClCompile>
     <ClCompile Include="manager.h">
       <Filter>头文件\manager</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\ethan1\Desktop\c++ 双人塔防游戏课程\C++双人塔防游戏开发\程序库合集\cJSON\cJSON.c">
+      <Filter>源文件\cJSON</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

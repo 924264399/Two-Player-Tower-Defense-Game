@@ -162,6 +162,10 @@ private:
 	void on_render()
 	{
 
+		static ConfigManager* instance = ConfigManager::instance(); //当前cpp可见 且初始化一次
+		static SDL_Rect& rect_dst = instance->rect_tilp_map;
+
+		SDL_RenderCopy(renderer, tex_tile_map, nullptr, &rect_dst);
 
 
 	}

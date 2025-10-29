@@ -131,6 +131,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="C:\Users\ethan1\Desktop\c++ 双人塔防游戏课程\C++双人塔防游戏开发\程序库合集\cJSON\cJSON.c" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="manager.h" />
   </ItemGroup>
