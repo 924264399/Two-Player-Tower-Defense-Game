@@ -21,7 +21,7 @@ private:
 	bool one_shot = false; //是否需要单次触发
 
 
-
+	std::function<void()> on_timeout;
 
 
 
