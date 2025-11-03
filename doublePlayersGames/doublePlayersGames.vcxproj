@@ -136,6 +136,7 @@
     <ClCompile Include="manager.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="animation.h" />
     <ClInclude Include="config_manager.h" />
     <ClInclude Include="enemy_type.h" />
     <ClInclude Include="game_manager.h" />
@@ -143,7 +144,7 @@
     <ClInclude Include="resources_manager.h" />
     <ClInclude Include="route.h" />
     <ClInclude Include="tile.h" />
-    <ClInclude Include="time.h" />
+    <ClInclude Include="timer.h" />
     <ClInclude Include="wave.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
