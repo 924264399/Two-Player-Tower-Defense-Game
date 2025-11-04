@@ -44,6 +44,45 @@ public:
 	~Animation() = default;
 
 
+
+	void reset()   //重置动画状态
+	{ 
+		timer.restart();
+
+		idx_frame = 0;
+	}
+
+
+
+
+	///序列帧图片  就是会一个格子放一帧的图片
+
+	void set_frame_data(SDL_Texture* texture, int num_h, int num_v, const std::vector<int>& idx_list) //texture就是序列帧图片   num_h 和num_v是宽和高的格子数量   idx_list是索引数组
+	{
+		int width_tex, height_tex;//纹理宽高
+
+		this->texture = texture;
+		SDL_QueryTexture(texture, nullptr, nullptr, &width_tex, &height_tex);
+		width_frame = width_tex / num_h, height_frame = height_tex / num_v; //相当于每个格子的像素
+
+		rect_src_list.resize(idx_list.size());   ////计算裁剪矩形的宽高
+		for (size_t i = 0; i < idx_list.size(); i++)
+		{
+			int idx = idx_list[i];
+			SDL_Rect& rect_src = rect_src_list[i];
+
+			rect_src.x = (idx % num_h) * width_frame;
+			rect_src.y = (idx / num_h) * height_frame;
+			rect_src.w = width_frame, rect_src.h = height_frame;
+		}
+	}
+
+
+
+
+
+
+
 private:
 	Timer timer;     //实例化时间类
 	bool is_loop = true;   //是否循环
