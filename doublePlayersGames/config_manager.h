@@ -84,7 +84,7 @@ public:
 	//游戏是不是胜利或者结束
 	bool is_game_win = true;
 	bool is_game_over = false;
-	SDL_Rect rect_tilp_map = { 0 };
+	SDL_Rect rect_tile_map = { 0 };
 	 
 	BasicTemplate basic_template;
 	PlayerTemplate player_template;
