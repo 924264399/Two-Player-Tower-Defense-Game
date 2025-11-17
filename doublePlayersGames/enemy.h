@@ -72,7 +72,178 @@ public:
 		anim_current->on_update(delta);
 	}
 
+	void on_render(SDL_Renderer* renderer) //画血条
+	{
+		static SDL_Rect rect;
+		static SDL_Point point;
+		static const int offset_y = 2;
+		static const Vector2 size_hp_bar = { 40, 8 };  ///血条的 长40像素 高8像素
+		static const SDL_Color color_border = { 116, 185, 124, 255 };   //边框的颜色
+		static const SDL_Color color_content = { 226, 255, 194, 255 };  
+
+		point.x = (int)(position.x - size.x / 2);
+		point.y = (int)(position.y - size.y / 2);
+
+		anim_current->on_render(renderer, point);
+
+
+
+		//画血条 只有当生命值小于最大生命值的时候 在画
+		//怎么画 就是一个线框 + 一个长度在改变的填充矩形
+		if (hp < max_hp)
+		{
+			rect.x = (int)(position.x - size_hp_bar.x / 2);   //首先position.x是敌人的中心位置 那么减去血条的一半宽度 就是x方向上血条的一个坐标
+			rect.y = (int)(position.y - size.y / 2 - size_hp_bar.y - offset_y); //一样的 y是敌人的中心y位置 减去一半的高度 - 血条宽度 此时紧贴敌人头顶 再减去一个offest
+
+			rect.w = (int)(size_hp_bar.x * (hp / max_hp)); //宽度随hp变化
+			rect.h = (int)size_hp_bar.y;
+			SDL_SetRenderDrawColor(renderer, color_content.r, color_content.g, color_content.b, color_content.a);
+			SDL_RenderFillRect(renderer, &rect);
+
+			rect.w = (int)size_hp_bar.x;
+			SDL_SetRenderDrawColor(renderer, color_border.r, color_border.g, color_border.b, color_border.a);
+			SDL_RenderDrawRect(renderer, &rect);
+		}
+	}
 	
+
+
+	void set_on_skill_released(SkillCallback on_skill_released) //技能回调
+	{
+		this->on_skill_released = on_skill_released;
+	}
+
+
+	//增加hp的函数(有回复技能用)
+	void increase_hp(double val)
+	{
+		hp += val;
+
+		if (hp > max_hp)
+			hp = max_hp;
+	}
+
+
+	//减少生命值（首到攻击）
+	void decrease_hp(double val)
+	{
+		hp -= val;
+
+		if (hp <= 0)
+		{
+			hp = 0;
+			is_valid = false;
+		}
+
+		is_show_sketch = true;
+		timer_sketch.restart();
+	}
+
+	//减速
+	void slow_down()
+	{
+		speed = max_speed - 0.5;
+		timer_restore_speed.set_wait_time(1);//减速都减1s
+		timer_restore_speed.restart();
+	}
+
+
+	//设置位置
+	void set_position(const Vector2& position)
+	{
+		this->position = position;
+	}
+
+
+
+	//设置路径 生成阶段
+	void set_route(const Route* route)
+	{
+		this->route = route;
+
+		refresh_position_target();
+	}
+
+
+	///让敌人直接死亡的 比如碰到家了
+	void make_invalid()
+	{
+		is_valid = false;
+	}
+
+
+	///获取hp
+	double get_hp() const
+	{
+		return hp;
+	}
+
+
+
+	//获取位置  碰撞监测用
+	const Vector2& get_size() const
+	{
+		return size;
+	}
+
+	//获取位置 碰撞监测用
+	const Vector2& get_position() const
+	{
+		return position;
+	}
+
+	//获取速度
+	const Vector2& get_velocity() const
+	{
+		return velocity;
+	}
+
+	//碰到家的时候 需要获取这个怪的伤害
+	double get_damage() const
+	{
+		return damage;
+	}
+
+	//包金币的概率 被击杀的时候调用
+	double get_reward_ratio() const
+	{
+		return reward_ratio;
+	}
+
+
+	//获取回复半径 要世界坐标
+	double get_recover_radius() const
+	{
+		return SIZE_TILE * recover_range;
+	}
+
+
+	//获取回复强度
+	double get_recover_intensity() const
+	{
+		return recover_intensity;
+	}
+
+	//能否被删除  那么就是存活就不能删除  死了的怪物才能删除 所以这里取反
+	bool can_remove() const
+	{
+		return !is_valid;
+	}
+
+
+	//获取这个敌人在这条路径上索敌的进度
+	double get_route_process() const
+	{
+
+		if (route->get_idx_list().size() == 1)
+			return 1;
+
+		return (double)idx_target / (route->get_idx_list().size() - 1);  //从出身点导防守目标的百分比  这个是之后防御塔索敌的时候用  判断优先级别
+	}
+
+
+
+
 
 protected:
 	Vector2 size;
