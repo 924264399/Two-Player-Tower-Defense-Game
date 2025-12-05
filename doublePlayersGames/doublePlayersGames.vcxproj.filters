@@ -74,13 +74,19 @@
     <ClInclude Include="slim_enemy.h">
       <Filter>头文件\enemy</Filter>
     </ClInclude>
-    <ClInclude Include="king_silm_enemy.h">
+    <ClInclude Include="king_slim_enemy.h">
       <Filter>头文件\enemy</Filter>
     </ClInclude>
-    <ClInclude Include="C:\Users\ethan1\Desktop\c++ 双人塔防游戏课程\C++双人塔防游戏开发\项目源代码\TdGame\goblin_priest_enemy.h">
+    <ClInclude Include="enemy_manager.h">
+      <Filter>头文件\manager</Filter>
+    </ClInclude>
+    <ClInclude Include="goblin_enemy.h">
       <Filter>头文件\enemy</Filter>
     </ClInclude>
-    <ClInclude Include="C:\Users\ethan1\Desktop\c++ 双人塔防游戏课程\C++双人塔防游戏开发\项目源代码\TdGame\skeleton_enemy.h">
+    <ClInclude Include="goblin_priest_enemy.h">
+      <Filter>头文件\enemy</Filter>
+    </ClInclude>
+    <ClInclude Include="skeleton_enemy.h">
       <Filter>头文件\enemy</Filter>
     </ClInclude>
   </ItemGroup>
